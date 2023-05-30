@@ -3,7 +3,7 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace PeliculasApi.Validation
 {
-    public class PesoArchivoValidacion: ValidationAttribute
+    public class PesoArchivoValidacion : ValidationAttribute
     {
         private readonly int pesoMaximoEnMegaBytes;
 
