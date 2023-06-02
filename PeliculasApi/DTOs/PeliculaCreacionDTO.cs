@@ -9,5 +9,7 @@ namespace PeliculasApi.DTOs
         [PesoArchivoValidacion(pesoMaximoEnMegaBytes: 4)]
         [TipoArchivoValidacion(grupoTipoArchivo: GrupoTipoArchivo.Imagen)]
         public IFormFile Poster { get; set; }
+
+        public List<int> GenerosIds { get; set; }
     }
 }
