@@ -7,6 +7,7 @@ namespace PeliculasApi.Entidades
         public int Id { get; set; }
         [Required]
         [StringLength(40)]
-        public string Nombre { get; set; } 
+        public string Nombre { get; set; }
+        public List<PeliculasGeneros> PeliculasGeneros{ get; set; }
     }
 }

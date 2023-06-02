@@ -30,7 +30,10 @@ namespace PeliculasApi.Controllers
         [HttpGet]
         public async Task<ActionResult<List<PeliculaDTO>>> Get([FromQuery] PaginacionDTO paginacionDTO)
         {
-            var queryable = context.Peliculas.AsQueryable();
+            var queryable = context.Peliculas
+                                        .Include(x => x.PeliculasActores)
+                                        .Include(x => x.PeliculasGeneros)
+                                        .AsQueryable();
             await HttpContext.InsertarParametrosPaginacion(queryable, paginacionDTO.CantidadRegistrosPorPagina);
             var pelicula = await queryable.Paginar(paginacionDTO).ToListAsync();
             return mapper.Map<List<PeliculaDTO>>(pelicula);
@@ -73,6 +76,7 @@ namespace PeliculasApi.Controllers
                     pelicula.Poster = await almacenadorArchivos.GuardarArchivo(contenido, extension, contenedor, peliculaCreacionDTO.Poster.ContentType);
                 }
             }
+            AsignarOrdernActores(pelicula);
             context.Add(pelicula);
             await context.SaveChangesAsync();
             var result = mapper.Map<PeliculaDTO>(pelicula);
@@ -80,10 +84,24 @@ namespace PeliculasApi.Controllers
 
         }
 
+        private void AsignarOrdernActores(Pelicula pelicula)
+        {
+            if(pelicula.PeliculasActores != null)
+            {
+                for(int i = 0; i < pelicula.PeliculasActores.Count; i++)
+                {
+                    pelicula.PeliculasActores[i].Orden = i;
+                }
+            }
+        }
+
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromForm] PeliculaCreacionDTO peliculaCreacionDTO)
         {
-            var peliculaDB = await context.Peliculas.FirstOrDefaultAsync(x => x.Id == id);
+            var peliculaDB = await context.Peliculas
+                                                    .Include(x=> x.PeliculasActores)
+                                                    .Include(x=> x.PeliculasGeneros)
+                                                    .FirstOrDefaultAsync(x => x.Id == id);
             if (peliculaDB == null)
                 return NotFound();
 
@@ -100,6 +118,7 @@ namespace PeliculasApi.Controllers
 
                 }
             }
+            AsignarOrdernActores(peliculaDB);
             await context.SaveChangesAsync();
             return NoContent();
         }
