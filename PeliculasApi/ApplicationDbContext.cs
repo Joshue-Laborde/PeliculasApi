@@ -16,10 +16,12 @@ namespace PeliculasApi
                 .HasKey(x => new { x.ActorId, x.PeliculaId });
 
             modelBuilder.Entity<PeliculasGeneros>()
-                .HasKey(x => new { x.GeneroId, x.PeliculasId });
+                .HasKey(x => new { x.GeneroId, x.PeliculaId });
 
             base.OnModelCreating(modelBuilder);
         }
+
+        
 
         public DbSet<Genero> Generos { get; set; }
         public DbSet<Actor> Actores { get; set; }
