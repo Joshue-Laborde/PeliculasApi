@@ -6,6 +6,5 @@ namespace PeliculasApi.DTOs
     {
         public int ActorId { get; set; }
         public string Personaje { get; set; }
-
     }
 }

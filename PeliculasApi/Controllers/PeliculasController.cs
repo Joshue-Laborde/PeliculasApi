@@ -7,24 +7,26 @@ using PeliculasApi.Entidades;
 using PeliculasApi.Helpers;
 using PeliculasApi.Servicios;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 
 namespace PeliculasApi.Controllers
 {
     [ApiController]
     [Route("api/peliculas")]
-    public class PeliculasController : ControllerBase
+    public class PeliculasController : CustomBaseController
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
         private readonly IAlmacenadorArchivos almacenadorArchivos;
-
+        private readonly ILogger<PeliculasController> logger;
         private readonly string contenedor = "peliculas";
 
-        public PeliculasController(ApplicationDbContext context, IMapper mapper, IAlmacenadorArchivos almacenadorArchivos)
+        public PeliculasController(ApplicationDbContext context, IMapper mapper, IAlmacenadorArchivos almacenadorArchivos, ILogger<PeliculasController> logger) : base(context, mapper)
         {
             this.context = context;
             this.mapper = mapper;
             this.almacenadorArchivos = almacenadorArchivos;
+            this.logger = logger;
         }
 
         [HttpGet]
@@ -78,6 +80,19 @@ namespace PeliculasApi.Controllers
                                         .Contains(filtroPeliculaDTO.GeneroId));
             }
 
+            if (!string.IsNullOrEmpty(filtroPeliculaDTO.CampoOrdenar))
+            {
+                var tipoOrden = filtroPeliculaDTO.OrdenAscendente ? "ascending" : "descending";
+                try
+                {
+                    peliculasQueryable = peliculasQueryable.OrderBy($"{filtroPeliculaDTO.CampoOrdenar} {tipoOrden}");
+                }
+                catch(Exception ex)
+                {
+                    logger.LogError(ex.Message, ex);
+                }
+            }
+
             await HttpContext.InsertarParametrosPaginacion(peliculasQueryable, filtroPeliculaDTO.CantidadRegistroPorPagina);
 
             var peliculas = await peliculasQueryable.Paginar(filtroPeliculaDTO.Paginacion).ToListAsync();
@@ -87,14 +102,18 @@ namespace PeliculasApi.Controllers
 
 
         [HttpGet("{id}", Name = "obtenerPelicula")]
-        public async Task<ActionResult<PeliculaDTO>> GetId(int id)
+        public async Task<ActionResult<PeliculasDetallesDTO>> GetId(int id)
         {
-            var pelicula = await context.Peliculas.FirstOrDefaultAsync(x => x.Id == id);
+            var pelicula = await context.Peliculas.Include(x=> x.PeliculasActores).ThenInclude(x=> x.Actor)
+                                                    .Include(x=> x.PeliculasGeneros).ThenInclude(x=>x.Genero)
+                                                    .FirstOrDefaultAsync(x => x.Id == id);
             
             if (pelicula == null)
                 return NotFound();
 
-            return mapper.Map<PeliculaDTO>(pelicula);
+            pelicula.PeliculasActores = pelicula.PeliculasActores.OrderBy(x => x.Orden).ToList();
+
+            return mapper.Map<PeliculasDetallesDTO>(pelicula);
         }
 
         [HttpGet, Route("EnCine")]
@@ -173,7 +192,7 @@ namespace PeliculasApi.Controllers
         [HttpPatch("{id}")]
         public async Task<ActionResult> Patch(int id, [FromBody] JsonPatchDocument<PeliculaPatchDTO> patchDocument)
         {
-            if (patchDocument is null)
+            /*if (patchDocument is null)
                 return BadRequest();
 
             var pelicula = await context.Peliculas.FirstOrDefaultAsync(x => x.Id == id);
@@ -192,18 +211,22 @@ namespace PeliculasApi.Controllers
 
             await context.SaveChangesAsync();
 
-            return NoContent();
+            return NoContent();*/
+
+            return await Patch<Pelicula, PeliculaPatchDTO>(id, patchDocument);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var existe = await context.Peliculas.AnyAsync(x => x.Id == id);
+            /*var existe = await context.Peliculas.AnyAsync(x => x.Id == id);
             if (!existe) { return NotFound(); }
 
             context.Remove(new Pelicula() { Id = id });
             await context.SaveChangesAsync();
-            return NoContent();
+            return NoContent();*/
+
+            return await Delete<Pelicula>(id);
         }
     }
 }
