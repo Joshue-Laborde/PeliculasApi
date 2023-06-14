@@ -18,6 +18,9 @@ namespace PeliculasApi
             modelBuilder.Entity<PeliculasGeneros>()
                 .HasKey(x => new { x.GeneroId, x.PeliculaId });
 
+            modelBuilder.Entity<PeliculasSalasDeCine>()
+                .HasKey(x => new { x.PeliculaId, x.SalaDeCineId });
+
             SeedData(modelBuilder);
 
             base.OnModelCreating(modelBuilder);
@@ -25,6 +28,7 @@ namespace PeliculasApi
 
         private void SeedData(ModelBuilder modelBuilder)
         {
+
             var aventura = new Genero() { Id = 1, Nombre = "Aventura" };
             var animation = new Genero() { Id = 2, Nombre = "Animación" };
             var suspenso = new Genero() { Id = 3, Nombre = "Suspenso" };
@@ -121,5 +125,7 @@ namespace PeliculasApi
         public DbSet<Pelicula> Peliculas { get; set; }
         public DbSet<PeliculasActores> PeliculasActores { get; set;}
         public DbSet<PeliculasGeneros> PeliculasGeneros { get;set; }
+        public DbSet<SalaDeCine> SalaDeCine { get;set; }
+        public DbSet<PeliculasSalasDeCine> PeliculasSalasDeCines { get; set; }
     }
 }

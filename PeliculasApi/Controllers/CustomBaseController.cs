@@ -39,7 +39,7 @@ namespace PeliculasApi.Controllers
         {
             var entidad = await context.Set<TEntidad>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
-            if(entidad == null) { return NotFound(); }
+            if (entidad == null) { return NotFound(); }
 
             return mapper.Map<TDTO>(entidad);
         }
@@ -75,7 +75,7 @@ namespace PeliculasApi.Controllers
         }
 
         protected async Task<ActionResult> Patch<TEntidad, TDTO>(int id, JsonPatchDocument<TDTO> patchDocument)
-            where TDTO: class
+            where TDTO : class
             where TEntidad : class, IId
         {
             if (patchDocument is null)
@@ -99,4 +99,5 @@ namespace PeliculasApi.Controllers
 
             return NoContent();
         }
+    }
 }
