@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
+using NetTopologySuite;
 using PeliculasApi.Entidades;
 
 namespace PeliculasApi
@@ -18,6 +20,9 @@ namespace PeliculasApi
             modelBuilder.Entity<PeliculasGeneros>()
                 .HasKey(x => new { x.GeneroId, x.PeliculaId });
 
+            modelBuilder.Entity<PeliculasSalasDeCine>()
+                .HasKey(x => new { x.PeliculaId, x.SalaDeCineId });
+
             SeedData(modelBuilder);
 
             base.OnModelCreating(modelBuilder);
@@ -25,6 +30,17 @@ namespace PeliculasApi
 
         private void SeedData(ModelBuilder modelBuilder)
         {
+            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+
+            modelBuilder.Entity<SalaDeCine>()
+               .HasData(new List<SalaDeCine>
+               {
+                    new SalaDeCine{Id = 1, Nombre = "Agora", Ubicacion = geometryFactory.CreatePoint(new Coordinate(-69.9388777, 18.4839233))},
+                    new SalaDeCine{Id = 2, Nombre = "Sambil", Ubicacion = geometryFactory.CreatePoint(new Coordinate(-69.9118804, 18.4826214))},
+                    new SalaDeCine{Id = 3, Nombre = "Megacentro", Ubicacion = geometryFactory.CreatePoint(new Coordinate(-69.856427, 18.506934))},
+                    new SalaDeCine{Id = 4, Nombre = "Village East Cinema", Ubicacion = geometryFactory.CreatePoint(new Coordinate(-73.986227, 40.730898))}
+               });
+
             var aventura = new Genero() { Id = 1, Nombre = "Aventura" };
             var animation = new Genero() { Id = 2, Nombre = "Animación" };
             var suspenso = new Genero() { Id = 3, Nombre = "Suspenso" };
@@ -121,5 +137,7 @@ namespace PeliculasApi
         public DbSet<Pelicula> Peliculas { get; set; }
         public DbSet<PeliculasActores> PeliculasActores { get; set;}
         public DbSet<PeliculasGeneros> PeliculasGeneros { get;set; }
+        public DbSet<SalaDeCine> SalaDeCine { get;set; }
+        public DbSet<PeliculasSalasDeCine> PeliculasSalasDeCines { get; set; }
     }
 }

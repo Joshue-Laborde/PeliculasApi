@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
+using PeliculasApi.Helpers;
 using PeliculasApi.Servicios;
 using System.Text.Json.Serialization;
 
@@ -20,9 +24,21 @@ namespace PeliculasApi
             services.AddAutoMapper(typeof(Startup));
 
             services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosAzure>();
+
+            services.AddSingleton<GeometryFactory>(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
+
+            services.AddSingleton(provider =>
+                new MapperConfiguration(config =>
+                {
+                    var geometryFactory = provider.GetRequiredService<GeometryFactory>();
+                    config.AddProfile(new AutoMapperProfiles(geometryFactory));
+                }).CreateMapper()
+            );
             
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                sqlServerOptions => sqlServerOptions.UseNetTopologySuite()
+                ));
 
             services.AddControllers()
                 .AddNewtonsoftJson();
