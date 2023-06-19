@@ -181,5 +181,6 @@ namespace PeliculasApi
         public DbSet<PeliculasGeneros> PeliculasGeneros { get;set; }
         public DbSet<SalaDeCine> SalaDeCine { get;set; }
         public DbSet<PeliculasSalasDeCine> PeliculasSalasDeCines { get; set; }
+        public DbSet<Review> Review { get; set; }
     }
 }

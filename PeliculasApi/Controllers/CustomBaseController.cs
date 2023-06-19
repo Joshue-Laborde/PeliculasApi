@@ -30,9 +30,14 @@ namespace PeliculasApi.Controllers
         protected async Task<List<TDTO>> Get<TEntidad, TDTO>(PaginacionDTO paginacionDTO) where TEntidad : class
         {
             var queryable = context.Set<TEntidad>().AsQueryable();
+            return await Get<TEntidad, TDTO>(paginacionDTO, queryable);
+        }
+
+        protected async Task<List<TDTO>> Get<TEntidad, TDTO>(PaginacionDTO paginacionDTO, IQueryable<TEntidad> queryable) where TEntidad : class
+        {
             await HttpContext.InsertarParametrosPaginacion(queryable, paginacionDTO.CantidadRegistrosPorPagina);
-            var actores = await queryable.Paginar(paginacionDTO).ToListAsync();
-            return mapper.Map<List<TDTO>>(actores);
+            var entidades = await queryable.Paginar(paginacionDTO).ToListAsync();
+            return mapper.Map<List<TDTO>>(entidades);
         }
 
         protected async Task<ActionResult<TDTO>> Get<TEntidad, TDTO>(int id) where TEntidad : class, IId
@@ -81,19 +86,19 @@ namespace PeliculasApi.Controllers
             if (patchDocument is null)
                 return BadRequest();
 
-            var actor = await context.Set<TEntidad>().FirstOrDefaultAsync(x => x.Id == id);
+            var entidad = await context.Set<TEntidad>().FirstOrDefaultAsync(x => x.Id == id);
 
-            if (actor == null)
+            if (entidad == null)
                 return NotFound();
 
-            var result = mapper.Map<TDTO>(actor);
+            var result = mapper.Map<TDTO>(entidad);
 
             patchDocument.ApplyTo(result, ModelState);
 
             var esValido = TryValidateModel(result);
             if (!esValido) return BadRequest(ModelState);
 
-            mapper.Map(result, actor);
+            mapper.Map(result, entidad);
 
             await context.SaveChangesAsync();
 
