@@ -66,7 +66,7 @@ namespace PeliculasApiTest.PruebasUnitarias
             Assert.IsNotNull(valor);
 
             var contexto3 = ConstruirContext(nombreBD);
-            var reviewDB = contexto3.Reviews.First();
+            var reviewDB = contexto3.Review.First();
             Assert.AreEqual(usuarioPorDefectoId, reviewDB.UsuarioId);
         }
 

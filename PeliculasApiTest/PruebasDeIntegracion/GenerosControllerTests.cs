@@ -2,11 +2,6 @@
 using Newtonsoft.Json;
 using PeliculasApi.DTOs;
 using PeliculasApi.Entidades;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PeliculasApiTest.PruebasDeIntegracion
 {
@@ -61,7 +56,7 @@ namespace PeliculasApiTest.PruebasDeIntegracion
             var factory = ConstruirWebApplicationFactory(nombreBD);
 
             var contexto = ConstruirContext(nombreBD);
-            contexto.Generos.Add(new Genero() { Nombre = "Género 1" });
+            contexto.Generos.Add(new Genero() { Nombre = "Genero 1" });
             await contexto.SaveChangesAsync();
 
             var cliente = factory.CreateClient();

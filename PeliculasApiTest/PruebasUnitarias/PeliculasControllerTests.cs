@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Moq;
 using PeliculasApi.Controllers;
 using PeliculasApi.DTOs;
 using PeliculasApi.Entidades;
@@ -58,10 +59,10 @@ namespace PeliculasApiTest.PruebasUnitarias
 
             var tituloPelicula = "Película 1";
 
-            var filtroDTO = new FiltroPeliculasDTO()
+            var filtroDTO = new FiltroPeliculaDTO()
             {
                 Titulo = tituloPelicula,
-                CantidadRegistrosPorPagina = 10
+                CantidadRegistroPorPagina = 10
             };
 
             var respuesta = await controller.Filtrar(filtroDTO);
@@ -124,7 +125,7 @@ namespace PeliculasApiTest.PruebasUnitarias
 
             var generoId = contexto.Generos.Select(x => x.Id).First();
 
-            var filtroDTO = new FiltroPeliculasDTO()
+            var filtroDTO = new FiltroPeliculaDTO()
             {
                 GeneroId = generoId
             };
@@ -145,7 +146,7 @@ namespace PeliculasApiTest.PruebasUnitarias
             var controller = new PeliculasController(contexto, mapper, null, null);
             controller.ControllerContext.HttpContext = new DefaultHttpContext();
 
-            var filtroDTO = new FiltroPeliculasDTO()
+            var filtroDTO = new FiltroPeliculaDTO()
             {
                 CampoOrdenar = "titulo",
                 OrdenAscendente = true
@@ -178,7 +179,7 @@ namespace PeliculasApiTest.PruebasUnitarias
             var controller = new PeliculasController(contexto, mapper, null, null);
             controller.ControllerContext.HttpContext = new DefaultHttpContext();
 
-            var filtroDTO = new FiltroPeliculasDTO()
+            var filtroDTO = new FiltroPeliculaDTO()
             {
                 CampoOrdenar = "titulo",
                 OrdenAscendente = false
@@ -213,7 +214,7 @@ namespace PeliculasApiTest.PruebasUnitarias
             var controller = new PeliculasController(contexto, mapper, null, mock.Object);
             controller.ControllerContext.HttpContext = new DefaultHttpContext();
 
-            var filtroDTO = new FiltroPeliculasDTO()
+            var filtroDTO = new FiltroPeliculaDTO()
             {
                 CampoOrdenar = "abc",
                 OrdenAscendente = true

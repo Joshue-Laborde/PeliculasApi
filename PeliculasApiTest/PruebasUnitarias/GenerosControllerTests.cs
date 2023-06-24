@@ -22,8 +22,8 @@ namespace PeliculasApiTest.PruebasUnitarias
             var contexto = ConstruirContext(nombreBD);
             var mapper = ConfigurarAutoMapper();
 
-            contexto.Generos.Add(new Genero() { Nombre = "Género 1" });
-            contexto.Generos.Add(new Genero() { Nombre = "Género 2" });
+            contexto.Generos.Add(new Genero() { Nombre = "Genero 1" });
+            contexto.Generos.Add(new Genero() { Nombre = "Genero 2" });
             await contexto.SaveChangesAsync();
 
             var contexto2 = ConstruirContext(nombreBD);
@@ -78,7 +78,7 @@ namespace PeliculasApiTest.PruebasUnitarias
             var contexto = ConstruirContext(nombreBD);
             var mapper = ConfigurarAutoMapper();
 
-            var nuevoGenero = new GeneroCreacionDTO() { Nombre = "nuevo género" };
+            var nuevoGenero = new GeneroCreacionDTO() { Nombre = "nuevo genero" };
 
             var controller = new GenerosController(contexto, mapper);
 
@@ -98,7 +98,7 @@ namespace PeliculasApiTest.PruebasUnitarias
             var contexto = ConstruirContext(nombreBD);
             var mapper = ConfigurarAutoMapper();
 
-            contexto.Generos.Add(new Genero() { Nombre = "Género 1" });
+            contexto.Generos.Add(new Genero() { Nombre = "Genero 1" });
             await contexto.SaveChangesAsync();
 
             var contexto2 = ConstruirContext(nombreBD);
@@ -138,7 +138,7 @@ namespace PeliculasApiTest.PruebasUnitarias
             var contexto = ConstruirContext(nombreBD);
             var mapper = ConfigurarAutoMapper();
 
-            contexto.Generos.Add(new Genero() { Nombre = "Género 1" });
+            contexto.Generos.Add(new Genero() { Nombre = "Genero 1" });
             await contexto.SaveChangesAsync();
 
             var contexto2 = ConstruirContext(nombreBD);

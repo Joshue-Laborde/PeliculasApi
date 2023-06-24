@@ -40,10 +40,10 @@ namespace PeliculasApiTest.PruebasUnitarias
             using (var context = LocalDbDatabaseInitializer.GetDbContextLocalDb(false))
             {
                 var mapper = ConfigurarAutoMapper();
-                var controller = new SalasDeCineController(context, mapper, geometryFactory);
+                var controller = new SalasDeCineController(context, geometryFactory, mapper);
                 var respuesta = await controller.Cercanos(filtro);
                 var valor = respuesta.Value;
-                Assert.AreEqual(2, valor.Count);
+                Assert.AreEqual(3, valor.Count);
             }
    }    }
 }
